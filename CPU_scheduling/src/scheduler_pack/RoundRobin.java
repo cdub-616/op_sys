@@ -56,14 +56,21 @@ public class RoundRobin {
                 hasStarted[i] = true;
             }
         }*/
-        for (int k: fifo)
-            System.out.println("queue: " + k);
+        //put first process in queue
+        int nextProcNum = procNotStarted.getFirst();
+        fifo.add(processes[nextProcNum][procNumIndex]);
+        procNotStarted.remove();
+        for (int proc: procNotStarted)
+        	System.out.println(proc);
         int[] waitingTimeArr = new int[numberOfProcesses];
         boolean[] isFinished = new boolean[numberOfProcesses];
-        while (!fifo.isEmpty() && !procNotStarted.isEmpty()) {
-        
+        //while (!fifo.isEmpty() && !procNotStarted.isEmpty()) {
+        while (!fifo.isEmpty()) {
+        	for (int k: fifo)
+                System.out.println("queue: " + k);
+
             //add processes to queue time
-            for (int i = 0; i < numberOfProcesses; i++) {
+            /*for (int i = 0; i < numberOfProcesses; i++) {
                 int arrivalTime = processes[i][procArTimeIndex];
                 if (arrivalTime <= time) {
                     int procNum = processes[i][procNumIndex];
@@ -75,7 +82,7 @@ public class RoundRobin {
                     }
                     //hasStarted[i] = true;
                 }
-            }
+            }*/
             for (int k: fifo)
                 System.out.println("queue: " + k);
             int processNumber = fifo.poll(), processIndex = processNumber - 1;
@@ -93,7 +100,11 @@ public class RoundRobin {
                 time += cpuBurst;
                 isFinished[processIndex] = true;
             }
-            
+        	int nextProcessArTime = processes[nextProcNum][procArTimeIndex];
+        	if (nextProcessArTime <= time) {
+        		fifo.add(nextProcNum);
+        		procNotStarted.remove();
+        	}
             //update waiting times
             for (int i = 0; i < numberOfProcesses; i++) {
                 int waitTimeSoFar = waitingTimeArr[i];
