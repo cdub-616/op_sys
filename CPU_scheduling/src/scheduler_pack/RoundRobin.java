@@ -11,18 +11,12 @@ public class RoundRobin {
 
     //constructors
     public RoundRobin(String firstLine, int quantumLength, 
-       int numberOfProcesses, String[] processArray) {
+       int numberOfProcesses, int[][] processArray) {
 
         //convert process data strings to 2D array
-        final int P_DATA = 4, procNumIndex = 0, procArTimeIndex = 1, 
-            burstIndex = 2;  
-        int[][] processes = new int[numberOfProcesses][P_DATA];
-        for (int i = 0; i < numberOfProcesses; i++) {
-            String[] processStrTokens = processArray[i].split(" ");
-            for (int j = 0; j < P_DATA; j++) {
-                processes[i][j] = Integer.parseInt(processStrTokens[j]);
-            }
-        }
+        final int PROCNUM_INDEX = 0, PROCARTIME_INDEX = 1, 
+            BURST_INDEX = 2;  
+        
         Queue<Integer> fifo = new LinkedList<>();  
         LinkedList<Integer> procNotStarted = new LinkedList<>();
         /*for (int i = 0; i < numberOfProcesses; i++) {
@@ -34,9 +28,9 @@ public class RoundRobin {
         int timerSort = 0, counter = 0;
         while (counter < numberOfProcesses) {  
             for (int i = 0; i < numberOfProcesses; i++) {
-                int arrivalTime = processes[i][procArTimeIndex];
+                int arrivalTime = processArray[i][PROCARTIME_INDEX];
                 if (arrivalTime == timerSort) {
-                    procNotStarted.add(processes[i][procNumIndex]);
+                    procNotStarted.add(processArray[i][PROCNUM_INDEX]);
                     counter++;                     
                 }
             }
@@ -58,7 +52,7 @@ public class RoundRobin {
         }*/
         //put first process in queue
         int nextProcNum = procNotStarted.getFirst();
-        fifo.add(processes[nextProcNum][procNumIndex]);
+        fifo.add(processArray[nextProcNum][PROCNUM_INDEX]);
         procNotStarted.remove();
         for (int proc: procNotStarted)
         	System.out.println(proc);
@@ -86,13 +80,13 @@ public class RoundRobin {
             for (int k: fifo)
                 System.out.println("queue: " + k);
             int processNumber = fifo.poll(), processIndex = processNumber - 1;
-            int cpuBurst = processes[processIndex][burstIndex];
+            int cpuBurst = processArray[processIndex][BURST_INDEX];
             String timeStr = Integer.toString(time);
             String pNumStr = Integer.toString(processNumber);
             String cpuLine = timeStr + " " + pNumStr;
             output.add(cpuLine);
-            if (processes[processIndex][burstIndex] > quantumLength) {  //not finished
-                processes[processIndex][burstIndex] = cpuBurst - quantumLength;
+            if (processArray[processIndex][BURST_INDEX] > quantumLength) {  //not finished
+                processArray[processIndex][BURST_INDEX] = cpuBurst - quantumLength;
                 fifo.add(processNumber);
                 time += quantumLength;
             }
@@ -100,7 +94,7 @@ public class RoundRobin {
                 time += cpuBurst;
                 isFinished[processIndex] = true;
             }
-        	int nextProcessArTime = processes[nextProcNum][procArTimeIndex];
+        	int nextProcessArTime = processArray[nextProcNum][PROCARTIME_INDEX];
         	if (nextProcessArTime <= time) {
         		fifo.add(nextProcNum);
         		procNotStarted.remove();
