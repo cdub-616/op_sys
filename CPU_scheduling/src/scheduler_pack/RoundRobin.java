@@ -11,147 +11,77 @@ public class RoundRobin {
 
     //constructors
     public RoundRobin(String firstLine, int quantumLength, 
-       int numberOfProcesses, int[][] processArray) {
-
-        //convert process data strings to 2D array
-        final int PROCNUM_INDEX = 0, PROCARTIME_INDEX = 1, 
-            BURST_INDEX = 2;  
+       int numberOfProcesses, LinkedList<Process> processes) {
         
-        Queue<Integer> fifo = new LinkedList<>();  
-        LinkedList<Integer> procNotStarted = new LinkedList<>();
-        /*for (int i = 0; i < numberOfProcesses; i++) {
-            procNotStarted.add(processes[i][procNumIndex]);
-        }*/
+        int time = 0, waitingTime = 0;
+        Queue<Process> readyQueue = new LinkedList<>();
+        int[] waitingTimeArr = new int[numberOfProcesses];
+        
+        //subtract running time and arrival time from waiting times
+        for (int  i = 0; i < numberOfProcesses; i++) {
+            waitingTimeArr[i] -= processes.get(i).getCpuBurstTime();
+            waitingTimeArr[i] -= processes.get(i).getArrivalTime();
+        }
+        
+        //add first line to output file
         output.add(firstLine);
         
-        //sort processes for queue
-        int timerSort = 0, counter = 0;
-        while (counter < numberOfProcesses) {  
-            for (int i = 0; i < numberOfProcesses; i++) {
-                int arrivalTime = processArray[i][PROCARTIME_INDEX];
-                if (arrivalTime == timerSort) {
-                    procNotStarted.add(processArray[i][PROCNUM_INDEX]);
-                    counter++;                     
-                }
-            }
-            timerSort++;
-        }
-        System.out.print("list:");
-        for (int k: procNotStarted) 
-            System.out.print(" " + k);
-        System.out.println();
         //simulate scheduling and CPU
-        int time = 0;
-        //boolean[] hasStarted = new boolean[numberOfProcesses];
+        while (!processes.isEmpty() || !readyQueue.isEmpty()) {
         
-        //add processes to queue at arrival time 0
-        /*for (int i = 0; i < numberOfProcesses; i++) {
-            int arrivalTime = processes[i][procArTimeIndex];
-            if (arrivalTime == time) {
-                fifo.add(processes[i][procNumIndex]);
-                hasStarted[i] = true;
+            //add arriving processes to queue
+            while (!processes.isEmpty() && processes.peek().getArrivalTime() <= time) {
+                readyQueue.add(processes.poll());
             }
-        }*/
-        //put first process in queue
-        for (int i = 0; i < numberOfProcesses; i++) {
-        	if (processArray[i][PROCARTIME_INDEX] == time) {
-        		fifo.add(processArray[i][PROCNUM_INDEX]);
-        		procNotStarted.remove();
-        	}
-        }
-        //fifo.add(processArray[nextProcNum][PROCNUM_INDEX]);
-        //procNotStarted.remove();
-        System.out.print("queue:");
-        for (int item: fifo)
-        	System.out.print(" " + item);
-        System.out.println();
-        System.out.print("list:");
-        for (int proc: procNotStarted)
-        	System.out.print(" " + proc);
-        System.out.println();
-        int[] waitingTimeArr = new int[numberOfProcesses];
-        boolean[] isFinished = new boolean[numberOfProcesses];
-        //while (!fifo.isEmpty() && !procNotStarted.isEmpty()) {
-        while (!fifo.isEmpty()) {
-        	System.out.println("time: " + time);
-        	System.out.print("queue:");
-        	for (int k: fifo)
-                System.out.print(" " + k);
-        	System.out.println();
-        	System.out.print("list:");
-            for (int proc: procNotStarted)
-            	System.out.print(" " + proc);
-            System.out.println();
-            //add processes to queue time
-            /*for (int i = 0; i < numberOfProcesses; i++) {
-                int arrivalTime = processes[i][procArTimeIndex];
-                if (arrivalTime <= time) {
-                    int procNum = processes[i][procNumIndex];
-                    fifo.add(procNum);
-                    for (int j = 0; j < procNotStarted.size(); j++) {
-                        if (procNotStarted.get(j) == procNum) {
-                            procNotStarted.remove(j);
-                        }
-                    }
-                    //hasStarted[i] = true;
-                }
-            }*/
+            if (readyQueue.isEmpty()) {
             
-            int processNumber = fifo.poll(), processIndex = processNumber - 1;
-            int cpuBurst = processArray[processIndex][BURST_INDEX];
-            String timeStr = Integer.toString(time);
-            String pNumStr = Integer.toString(processNumber);
-            String cpuLine = timeStr + " " + pNumStr;
-            output.add(cpuLine);
-            if (processArray[processIndex][BURST_INDEX] > quantumLength) {  //not finished
-                processArray[processIndex][BURST_INDEX] = cpuBurst - quantumLength;
-                fifo.add(processNumber);
-                time += quantumLength;
-            }
-            else {                                             //finished
-                time += cpuBurst;
-                isFinished[processIndex] = true;
-            }
-            //int nextProcNum = procNotStarted.getFirst() - 1;
-        	//int nextProcessArTime = processArray[nextProcNum][PROCARTIME_INDEX];
-        	//if (nextProcessArTime <= time && isFinished[processIndex] == false) {
-        	//	fifo.add(nextProcNum);
-        	//	procNotStarted.remove();
-        	//}
-            if (!procNotStarted.isEmpty()) {
-            	for (int i = 0; i < procNotStarted.size(); i++) {
-            		if (processArray[i][PROCARTIME_INDEX] <= time) {
-            			fifo.add(procNotStarted.getFirst());
-            			procNotStarted.remove();
-            		}
-            	}
-            }
-            //update waiting times
-            for (int i = 0; i < numberOfProcesses; i++) {
-                int waitTimeSoFar = waitingTimeArr[i];
-                if (isFinished[i] == false && processNumber != i + 1) {
-                    if (quantumLength >= cpuBurst) {
-                        waitingTimeArr[i] = waitTimeSoFar + cpuBurst;
+                //no processes in queue, move to next arrival
+                time = processes.peek().getArrivalTime();
+            } else {
+                
+                //add process and time to output
+                Process currentProcess = readyQueue.poll();
+                String timeStr = Integer.toString(time);
+                String procStr = Integer.toString(currentProcess.getProcessNumber());
+                output.add(timeStr + " " + procStr);
+                
+                //subtract arrival time from waiting time
+                int currentProcessIndex = currentProcess.getProcessNumber() - 1;
+                
+                //make decisions
+                if (currentProcess.getCpuBurstTime() <= quantumLength) {
+                
+                    //process finished
+                    time += currentProcess.getCpuBurstTime();
+                    
+                    //add final time to waiting times
+                    waitingTimeArr[currentProcessIndex] += time;
+                } else {
+                    time += quantumLength;
+                   
+                    //process not finished and check for new arrivals
+                    while (!processes.isEmpty() && processes.peek().getArrivalTime() <= time) {
+                        Process newProcess = processes.poll();
+                        readyQueue.add(newProcess);
                     }
-                    else {
-                        waitingTimeArr[i] = waitTimeSoFar + quantumLength;
-                    }
+                    readyQueue.add(currentProcess);
+                    int burstTime = currentProcess.getCpuBurstTime();
+                    currentProcess.setCpuBurstTime(burstTime - quantumLength);
                 }
             }
+            
         }
-        double avg = averageWaitTime(waitingTimeArr);
-        String lastLine = String.format("AVG Waiting Time: %.2f", avg);
+        
+        //calculate and write average waiting time
+        for (int proc: waitingTimeArr) {
+            waitingTime += proc;
+        }
+        double averageWaitingTime = (double) waitingTime / numberOfProcesses;
+        String lastLine = String.format("AVG Waiting Time: %.2f", averageWaitingTime);
         output.add(lastLine);
     }
 
     //methods
-    private double averageWaitTime(int[] wait) {
-        double sum = 0;
-        for (int i = 0; i < wait.length; i++) {
-            sum += wait[i];
-        }
-        return sum / wait.length;
-    }
     public ArrayList<String> getOutput() {
         return output;
     }

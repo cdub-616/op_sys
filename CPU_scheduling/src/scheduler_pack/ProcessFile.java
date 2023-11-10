@@ -1,40 +1,47 @@
 package scheduler_pack;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class ProcessFile {
 
     //fields
     final int P_DATA = 4;
-    int[][] intProcesses;
+    LinkedList<Process> processes = new LinkedList<>();
     String firstLine, scheduleType;
     int quantumLength, numberOfProcesses;
     
     //constructors
     public ProcessFile(ArrayList<String> lines) {
-        String[] processes;
+        String[] proc;
         
         firstLine = lines.get(0);
         String[] firstLineTokens = firstLine.split(" ");
         scheduleType = firstLineTokens[0];
         quantumLength = Integer.parseInt(firstLineTokens[1]);
         numberOfProcesses = Integer.parseInt(lines.get(1));
-        processes = new String[numberOfProcesses];
+        proc = new String[numberOfProcesses];
         for (int i = 2; i < lines.size(); i++) { //string line for each process
-            processes[i - 2] = lines.get(i);
+            proc[i - 2] = lines.get(i);
         }
-        intProcesses = new int[numberOfProcesses][P_DATA];
+        //intProcesses = new int[numberOfProcesses][P_DATA];
         for (int i = 0; i < numberOfProcesses; i++) { //split each line
-            String[] processStrTokens = processes[i].split(" ");
-            for (int j = 0; j < P_DATA; j++) {   
+            String[] processStrTokens = proc[i].split(" ");
+            int name = Integer.parseInt(processStrTokens[0]);
+            int arrival = Integer.parseInt(processStrTokens[1]);
+            int burst = Integer.parseInt(processStrTokens[2]);
+            int priority = Integer.parseInt(processStrTokens[3]);
+            Process process = new Process(name, arrival, burst, priority);
+            processes.add(process);
+            /*for (int j = 0; j < P_DATA; j++) {   
                 intProcesses[i][j] = Integer.parseInt(processStrTokens[j]);
-            }
+            }*/
         }
     }
     
     //methods
-    public int[][] getProcessArray() {
-        return intProcesses;
+    public LinkedList<Process> getProcessList() {
+        return processes;
     }
     public String getFirstLine() {
         return firstLine;

@@ -7,19 +7,9 @@ public class Scheduler {
     public static void main(String[] args) {
         
         //fields
-        //String fileNameIn = "", fileNameOut = "output.txt"; //for cli
         String fileNameIn = "input.txt", fileNameOut = "output.txt", scheduler;
         ArrayList<String> lines = new ArrayList<String>();
         ArrayList<String> outLines = new ArrayList<String>();
-        
-        //get input file name
-        /*if (args.length != 1) { //for cli
-            System.out.println("need input file name");
-            System.exit(-1);
-        }
-        else {
-            fileNameIn = args[0];
-        }*/
         
         //get lines from file
         ReadFile fileLines = new ReadFile(fileNameIn);
@@ -32,10 +22,16 @@ public class Scheduler {
         scheduler = fileData.getScheduleType(); 
         if (scheduler.equals("RR")){
             RoundRobin rr = new RoundRobin(fileData.getFirstLine(), 
-            fileData.getQuantumLength(), fileData.getNumberOfProcesses(),
-            fileData.getProcessArray());
+                fileData.getQuantumLength(), fileData.getNumberOfProcesses(),
+                fileData.getProcessList());
             outLines = rr.getOutput();  //get data for output file
+        } else if (scheduler.equals("SJF")){
+            ShortestJobFirst sjf = new ShortestJobFirst(fileData.getFirstLine(),
+                fileData.getQuantumLength(), fileData.getNumberOfProcesses(),
+                fileData.getProcessList());
+             outLines = sjf.getOutput();   
         }
+        
         else {
             System.out.println("Incorrect schedule format");
             System.exit(-1);
