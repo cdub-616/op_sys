@@ -32,9 +32,14 @@ public class Scheduler {
              outLines = sjf.getOutput();   
         } else if (scheduler.equals("PR_noPREMP")) {
             Priority_noPreemption pnp = new Priority_noPreemption(
-                fileData.getFirstLine(), fileData.getQuantumLength(), 
-                fileData.getNumberOfProcesses(), fileData.getProcessList());
+                fileData.getFirstLine(), fileData.getNumberOfProcesses(), 
+                fileData.getProcessList());
                outLines = pnp.getOutput();
+        } else if (scheduler.equals("PR_withPREMP")) {
+        	Priority_withPreemption pwp = new Priority_withPreemption(
+        	    fileData.getFirstLine(), fileData.getNumberOfProcesses(), 
+        	    fileData.getProcessList());
+        	outLines = pwp.getOutput();
         } else {
             System.out.println("Incorrect schedule format");
             System.exit(-1);
