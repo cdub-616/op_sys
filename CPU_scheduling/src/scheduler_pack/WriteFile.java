@@ -2,12 +2,12 @@ package scheduler_pack;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class WriteFile {
 
     //constructors
-    public WriteFile(ArrayList<String> output, String outName) {
+    public WriteFile(LinkedList<String> output, String outName) {
         try {
             File outFile = new File(outName);
             if (!outFile.exists()) {

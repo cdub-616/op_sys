@@ -1,6 +1,5 @@
 package scheduler_pack;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class ProcessFile {
@@ -9,16 +8,18 @@ public class ProcessFile {
     final int P_DATA = 4;
     LinkedList<Process> processes = new LinkedList<>();
     String firstLine, scheduleType;
-    int quantumLength, numberOfProcesses;
+    int quantumLength = 0, numberOfProcesses = 0;
     
     //constructors
-    public ProcessFile(ArrayList<String> lines) {
+    public ProcessFile(LinkedList<String> lines) {
         String[] proc;
         
         firstLine = lines.get(0);
         String[] firstLineTokens = firstLine.split(" ");
         scheduleType = firstLineTokens[0];
-        quantumLength = Integer.parseInt(firstLineTokens[1]);
+        if (firstLineTokens.length > 1) {
+            quantumLength = Integer.parseInt(firstLineTokens[1]);
+        }
         numberOfProcesses = Integer.parseInt(lines.get(1));
         proc = new String[numberOfProcesses];
         for (int i = 2; i < lines.size(); i++) { //string line for each process

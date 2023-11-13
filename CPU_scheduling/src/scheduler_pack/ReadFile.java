@@ -1,13 +1,13 @@
 package scheduler_pack;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Scanner;
 
 public class ReadFile {
 
     //fields
-    ArrayList<String> lines = new ArrayList<>();
+    LinkedList<String> lines = new LinkedList<>();
     
     //constructors
     public ReadFile(String filename) {
@@ -27,7 +27,7 @@ public class ReadFile {
     }
 
     //methods
-    public ArrayList<String> getLines(){
+    public LinkedList<String> getLines(){
         return lines;
     }
 }   

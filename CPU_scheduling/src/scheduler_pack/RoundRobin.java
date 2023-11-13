@@ -1,13 +1,12 @@
 package scheduler_pack;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
 public class RoundRobin {
 
     //fields
-    ArrayList<String> output = new ArrayList<>();
+    LinkedList<String> output = new LinkedList<>();
 
     //constructors
     public RoundRobin(String firstLine, int quantumLength, 
@@ -45,7 +44,6 @@ public class RoundRobin {
                 String procStr = Integer.toString(currentProcess.getProcessNumber());
                 output.add(timeStr + " " + procStr);
                 
-                //subtract arrival time from waiting time
                 int currentProcessIndex = currentProcess.getProcessNumber() - 1;
                 
                 //make decisions
@@ -82,7 +80,7 @@ public class RoundRobin {
     }
 
     //methods
-    public ArrayList<String> getOutput() {
+    public LinkedList<String> getOutput() {
         return output;
     }
 }

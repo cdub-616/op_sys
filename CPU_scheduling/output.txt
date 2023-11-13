@@ -1,15 +1,7 @@
-RR 3
-0 1
-3 1
-6 2
-9 1
-12 3
-15 1
+PR_noPREMP
+0 2
+3 5
+8 1
 18 3
 21 4
-24 1
-27 4
-28 1
-31 1
-34 1
-AVG Waiting Time: 5.50
+AVG Waiting Time: 10.00

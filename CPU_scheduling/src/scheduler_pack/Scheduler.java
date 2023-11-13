@@ -1,6 +1,6 @@
 package scheduler_pack;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class Scheduler {
 
@@ -8,8 +8,8 @@ public class Scheduler {
         
         //fields
         String fileNameIn = "input.txt", fileNameOut = "output.txt", scheduler;
-        ArrayList<String> lines = new ArrayList<String>();
-        ArrayList<String> outLines = new ArrayList<String>();
+        LinkedList<String> lines = new LinkedList<String>();
+        LinkedList<String> outLines = new LinkedList<String>();
         
         //get lines from file
         ReadFile fileLines = new ReadFile(fileNameIn);
@@ -30,9 +30,12 @@ public class Scheduler {
                 fileData.getQuantumLength(), fileData.getNumberOfProcesses(),
                 fileData.getProcessList());
              outLines = sjf.getOutput();   
-        }
-        
-        else {
+        } else if (scheduler.equals("PR_noPREMP")) {
+            Priority_noPreemption pnp = new Priority_noPreemption(
+                fileData.getFirstLine(), fileData.getQuantumLength(), 
+                fileData.getNumberOfProcesses(), fileData.getProcessList());
+               outLines = pnp.getOutput();
+        } else {
             System.out.println("Incorrect schedule format");
             System.exit(-1);
         }
