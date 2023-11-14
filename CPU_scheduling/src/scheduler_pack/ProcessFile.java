@@ -20,6 +20,7 @@ public class ProcessFile {
         if (firstLineTokens.length > 1) {
             quantumLength = Integer.parseInt(firstLineTokens[1]);
         }
+        numberOfProcesses = Integer.parseInt(lines.get(1));
         proc = new String[numberOfProcesses];
         for (int i = 2; i < lines.size(); i++) { //string line for each process
             proc[i - 2] = lines.get(i);
@@ -33,9 +34,6 @@ public class ProcessFile {
             int priority = Integer.parseInt(processStrTokens[3]);
             Process process = new Process(name, arrival, burst, priority);
             processes.add(process);
-            /*for (int j = 0; j < P_DATA; j++) {   
-                intProcesses[i][j] = Integer.parseInt(processStrTokens[j]);
-            }*/
         }
     }
     
